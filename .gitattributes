@@ -1,3 +1,16 @@
-*.php text eol=lf
+*.php   text eol=lf
+*.html  text eol=lf
+*.tpl   text eol=lf
+*.css   text eol=lf
+*.less  text eol=lf
+*.js    text eol=lf
 
 *.sln text eol=crlf
+
+*.png binary
+*.jpg binary
+*.gif binary
+*.bmp binary
+*.pdf binary
+*.ttf binary
+*.otf binary
