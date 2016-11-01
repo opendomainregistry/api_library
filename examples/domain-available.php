@@ -39,7 +39,7 @@ if ($result['status'] !== Api_Odr::STATUS_SUCCESS) {
 
 $result = $result['response'];
 
-if ($result['available'] === true) {
+if ($result['is_available'] === true) {
     // Domain is available for registration
     echo 'Domain "'. $domainName .'" is available';
 
