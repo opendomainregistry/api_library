@@ -35,7 +35,13 @@ $demo->custom('/domain/auth-code/'. $domainId .'/', Api_Odr::METHOD_GET);
 $result = $demo->getResult();
 
 if ($result['status'] !== Api_Odr::STATUS_SUCCESS) {
-    echo 'Following error occurred: '. $result['response'];
+    echo 'Following error occurred: '. (is_array($result['response']) ? $result['response']['message'] : $result['response']);
+
+    if (!empty($result['response']['data'])) {
+        foreach ($result['response']['data'] as $name => $error) {
+            echo "\r\n\t{$name}: {$error}";
+        }
+    }
 
     exit();
 }
