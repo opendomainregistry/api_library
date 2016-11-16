@@ -498,7 +498,7 @@ class Api_Odr
         curl_close($ch);
 
         // Too much request at a time can ban us
-        sleep(1);
+        usleep(500);
 
         if (!empty($this->_error)) {
             throw new Api_Odr_Exception($this->_error);
