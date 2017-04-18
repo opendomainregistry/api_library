@@ -191,13 +191,17 @@ class Api_Odr
     /**
      * Return list of user's domains
      *
+     * @param array $request Additional request parameters, like page, filters and sorting
+     *
      * @return Api_Odr
      *
      * @throws Api_Odr_Exception
      */
-    public function getDomains()
+    public function getDomains(array $request = array())
     {
-        $this->_execute('/domain/', self::METHOD_GET);
+        $params = http_build_query($request);
+
+        $this->_execute('/domain/?' . $params, self::METHOD_GET);
 
         return $this;
     }
