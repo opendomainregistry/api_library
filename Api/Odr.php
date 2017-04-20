@@ -8,7 +8,14 @@ class Api_Odr
      *
      * @protected
      */
-    protected $_result;
+    protected $_resultBody;
+
+    /**
+     * @var null|array
+     *
+     * @protected
+     */
+    protected $_resultHeaders;
 
     /**
      * @var null|string
@@ -116,7 +123,7 @@ class Api_Odr
             throw new Api_Odr_Exception($this->_error);
         }
 
-        $result = $this->_result;
+        $result = $this->_resultBody;
 
         if (!is_string($apiKey) || $apiKey === '') {
             $apiKey = $this->_config['api_key'];
@@ -177,7 +184,7 @@ class Api_Odr
 
         $this->_execute('/user/login/', self::METHOD_POST, $data);
 
-        $result = $this->_result;
+        $result = $this->_resultBody;
 
         if ($result['status'] === self::STATUS_ERROR) {
             throw new Api_Odr_Exception($result['response']['message']);
@@ -451,7 +458,8 @@ class Api_Odr
      */
     protected function _execute($url = '', $method = self::DEFAULT_METHOD, array $data = array())
     {
-        $this->_result = null;
+        $this->_resultBody    = null;
+        $this->_resultHeaders = null;
 
         if (!is_string($method) || $method === '') {
             $method = self::DEFAULT_METHOD;
@@ -476,6 +484,7 @@ class Api_Odr
 
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_CUSTOMREQUEST,  $method);
+        curl_setopt($ch, CURLOPT_HEADER,         true);
 
         if (count($data) > 0) {
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
@@ -493,10 +502,13 @@ class Api_Odr
 
         $result = curl_exec($ch);
 
+        list($resultHeaders, $resultBody) = explode("\r\n\r\n", $result, 2);
+
         $this->_error = curl_error($ch);
 
         if (empty($this->_error)) {
-            $this->_result = json_decode($result, true);
+            $this->_resultBody    = json_decode($resultBody, true);
+            $this->_resultHeaders = $this->parseHeaders($resultHeaders);
         }
 
         curl_close($ch);
@@ -518,7 +530,17 @@ class Api_Odr
      */
     public function getResult()
     {
-        return $this->_result;
+        return $this->_resultBody;
+    }
+
+    /**
+     * Return request result headers
+     *
+     * @return null|array
+     */
+    public function getResultHeaders()
+    {
+        return $this->_resultHeaders;
     }
 
     /**
@@ -570,5 +592,32 @@ class Api_Odr
         $this->_headers = array_merge($this->_headers, $name);
 
         return $this;
+    }
+
+    public function parseHeaders($headers)
+    {
+        if (is_array($headers)) {
+            return $headers;
+        }
+
+        $parsed = array();
+
+        foreach (explode("\r\n", $headers) as $i => $headerInfo) {
+            if ($i === 0 && strpos($headerInfo, ':') === false) {
+                $parsed['HttpCode'] = $parsed['httpcode'] = $headerInfo;
+
+                continue;
+            }
+
+            list ($key, $value) = explode(':', $headerInfo, 2);
+
+            $key   = trim($key);
+            $value = trim($value);
+
+            $parsed[$key]                = $value;
+            $parsed[mb_strtolower($key)] = $value;
+        }
+
+        return $parsed;
     }
 }
