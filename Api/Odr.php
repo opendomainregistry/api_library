@@ -490,15 +490,17 @@ class Api_Odr
             curl_setopt($ch, CURLOPT_POSTFIELDS, json_encode($data));
         }
 
+        $headers = array();
+
         if (count($this->_headers) > 0) {
-            $headers = array();
-
             foreach ($this->_headers as $k => $v) {
-                $headers[] = $k .': '. $v;
+                $headers[] = $k . ': ' . $v;
             }
-
-            curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         }
+
+        $headers[] = 'Expect:'; // Prevent cURL from sending HTTP/1.1 100 Continue (thanks to @githubbauman)
+
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
         $result = curl_exec($ch);
 
