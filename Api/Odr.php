@@ -141,13 +141,14 @@ class Api_Odr
         }
 
         $signatureRuleWrapper = $result['response']['fields']['signature']['signature_rule'];
-        $signatureRule        = $result['response']['fields']['signature']['signature_rule_clear'];
+
+        $signatureRule = $result['response']['fields']['signature']['signature_rule_clear'];
 
         $wrapper = 'sha1';
 
         if (strpos($signatureRuleWrapper, '#SHA1(') === 0) {
             $wrapper = 'sha1';
-        } elseif(strpos($signatureRuleWrapper, '#MD5(') === 0) {
+        } elseif (strpos($signatureRuleWrapper, '#MD5(') === 0) {
             $wrapper = 'md5';
         }
 
@@ -165,7 +166,7 @@ class Api_Odr
 
         $signature = str_replace(array_keys($r), array_values($r), $signatureRule);
 
-        switch($wrapper) {
+        switch ($wrapper) {
             case 'sha1':
                     $signature = sha1($signature);
                 break;
@@ -225,7 +226,7 @@ class Api_Odr
     public function checkDomain($domain)
     {
         if (!is_numeric($domain) && (!is_string($domain) || $domain === '')) {
-            throw new Api_Odr_Exception('Domain must be a string, but you give us a '. gettype($domain));
+            throw new Api_Odr_Exception('Domain must be a string, but you give us a ' . gettype($domain));
         }
 
         $domain = trim($domain, ' /.');
@@ -234,7 +235,7 @@ class Api_Odr
             throw new Api_Odr_Exception('Domain name is required for this operation');
         }
 
-        $this->_execute('/domain/available/'. $domain .'/', self::METHOD_GET);
+        $this->_execute('/domain/available/' . $domain . '/', self::METHOD_GET);
 
         return $this;
     }
@@ -249,7 +250,7 @@ class Api_Odr
      */
     public function updateDomain($id, array $data = array())
     {
-        $this->_execute('/domain/'. trim($id) .'/', self::METHOD_PUT, $data);
+        $this->_execute('/domain/' . trim($id) . '/', self::METHOD_PUT, $data);
 
         return $this;
     }
@@ -266,7 +267,7 @@ class Api_Odr
      */
     public function transferDomain($id, array $data = array())
     {
-        $this->_execute('/domain/'. trim($id) .'/transfer/', self::METHOD_PUT, $data);
+        $this->_execute('/domain/' . trim($id) . '/transfer/', self::METHOD_PUT, $data);
 
         return $this;
     }
@@ -306,7 +307,7 @@ class Api_Odr
             throw new Api_Odr_Exception('Contact ID must be a positive number');
         }
 
-        $this->_execute('/contact/'. $contactId .'/', self::METHOD_GET);
+        $this->_execute('/contact/' . $contactId . '/', self::METHOD_GET);
 
         return $this;
     }
@@ -322,13 +323,6 @@ class Api_Odr
      */
     public function createContact(array $data)
     {
-        // If you want to pass data directly as part of request, you can uncomment following lines:
-        /*
-        if (empty($data)) {
-            $data = $_REQUEST;
-        }
-        */
-
         $this->_execute('/contact/', self::METHOD_POST, $data);
 
         return $this;
@@ -347,7 +341,8 @@ class Api_Odr
     public function registerDomain($domainName, array $data)
     {
         if (is_array($domainName) && count($data) === 0) {
-            $data       = $domainName;
+            $data = $domainName;
+
             $domainName = null;
         }
 
@@ -366,7 +361,7 @@ class Api_Odr
             $domainName = $data['domain_name'];
         }
 
-        $this->_execute('/domain/'. $domainName .'/', self::METHOD_POST, $data);
+        $this->_execute('/domain/' . $domainName . '/', self::METHOD_POST, $data);
 
         return $this;
     }
@@ -390,7 +385,7 @@ class Api_Odr
 
         $what = strtolower(trim($what));
 
-        return $this->custom('/info/'. trim($what, '/') .'/', $method, $data);
+        return $this->custom('/info/' . trim($what, '/') . '/', $method, $data);
     }
 
     /**
@@ -404,7 +399,7 @@ class Api_Odr
      */
     public function infoRegisterDomain($domainName)
     {
-        return $this->info('/domain/'. $domainName .'/', self::METHOD_POST);
+        return $this->info('/domain/' . $domainName . '/', self::METHOD_POST);
     }
 
     /**
@@ -417,7 +412,7 @@ class Api_Odr
      */
     public function setAutorenew($domainName, $state)
     {
-        return $this->custom('/domain/' . $domainName . '/renew-' . ($state ? 'on' : 'off') .'/', Api_Odr::METHOD_PUT);
+        return $this->custom('/domain/' . $domainName . '/renew-' . ($state ? 'on' : 'off') . '/', Api_Odr::METHOD_PUT);
     }
 
     /**
@@ -477,7 +472,7 @@ class Api_Odr
         }
 
         if (strpos($url, $host) !== 0) {
-            throw new Api_Odr_Exception('Wrong host for URL ('. $url .')');
+            throw new Api_Odr_Exception('Wrong host for URL (' . $url . ')');
         }
 
         $ch = curl_init($url);
@@ -616,7 +611,8 @@ class Api_Odr
             $key   = trim($key);
             $value = trim($value);
 
-            $parsed[$key]                = $value;
+            $parsed[$key] = $value;
+
             $parsed[mb_strtolower($key)] = $value;
         }
 
