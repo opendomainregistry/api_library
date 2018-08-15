@@ -57,7 +57,7 @@ function fieldToHtml($name, array $field)
     $html = '<input type="#TYPE#" name="#NAME#"#REQUIRED##READONLY##CLASSNAME##TITLE#>';
 
     $r = array(
-        '#TYPE#'      => $field['class'] === 'String_Email' ? 'email' : 'text',
+        '#TYPE#'      => in_array($field['class'], array('String_Email', 'Text_Email'), true) ? 'email' : 'text',
         '#NAME#'      => $name,
         '#REQUIRED#'  => empty($field['is_required']) ? '' : ' required',
         '#READONLY#'  => empty($field['is_readonly']) ? '' : ' readonly',
@@ -65,9 +65,9 @@ function fieldToHtml($name, array $field)
         '#TITLE#'     => empty($field['title']) ? ' placeholder="' . $name . '"' : ' title="' . $field['title'] . '" placeholder="' . $field['title'] . '"',
     );
 
-    if (strpos($field['class'], 'String_Textarea') === 0) {
+    if (strpos($field['class'], 'String_Textarea') === 0 || strpos($field['class'], 'Text_Textarea') === 0) {
         $html = '<textarea name="#NAME#"#REQUIRED##READONLY##CLASSNAME##TITLE#></textarea>';
-    } elseif ($field['class'] === 'String_Nameserver') {
+    } elseif (in_array($field['class'], array('String_Nameserver', 'Text_Nameserver'), true)) {
         $html = '<input type="#TYPE#" name="#NAME#[host]"#REQUIRED##READONLY##CLASSNAME##TITLE#>';
     } elseif (strpos($field['class'], 'Checkbox') === 0) {
         $html = '<label><input type="checkbox" value="1"#REQUIRED##READONLY##CLASSNAME#>' . (!empty($field['title']) ? $field['title'] : $name) . '</label>';
