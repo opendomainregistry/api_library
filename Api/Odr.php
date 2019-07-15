@@ -273,6 +273,22 @@ class Api_Odr
     }
 
     /**
+     * Update existing dns with new data
+     *
+     * @param string|int $id Either ID or domain name
+     * @param array $data Data for update
+     *
+     * @return Api_Odr
+     * @throws Api_Odr_Exception
+     */
+    public function updateDNS($id, array $data = array())
+    {
+        $this->_execute('/dns/' . trim($id) . '/', self::METHOD_PUT, $data);
+
+        return $this;
+    }
+
+    /**
      * Return list of user's contacts
      *
      * @return Api_Odr
